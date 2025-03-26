@@ -96,3 +96,29 @@ exports.loginUser = (req, res) => {
 
   res.json({ message: "Login successful" });
 };
+
+exports.signupUser = async (req, res) => {
+  try {
+      const { name, email, password } = req.body;
+
+      if (!name || !email || !password) {
+          return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Hash password (assuming bcrypt is installed)
+      const bcrypt = require("bcryptjs");
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Insert into database (assuming MySQL & db connection exist)
+      const db = require("../config/db");
+      const [result] = await db.execute(
+          "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+          [name, email, hashedPassword]
+      );
+
+      res.status(201).json({ message: "User registered successfully", userId: result.insertId });
+  } catch (error) {
+      console.error("Signup error:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
