@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 
 // Get user profile
@@ -86,4 +86,13 @@ exports.deleteUser = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ message: 'Server error' });
   }
+};
+exports.loginUser = (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+  }
+
+  res.json({ message: "Login successful" });
 };

@@ -6,7 +6,7 @@ import SignIn from './Components/Signin';
 import SignUp from './Components/Signup';
 import CreateBlogPage from './Components/CreateBlog';
 import ManageBlog from './Components/ManageBlog';
-
+import BlogDetailPage from './Components/BlogDetailPage';  
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated'); // Check if the user is authenticated
@@ -17,9 +17,11 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
+      
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
+        <Route exact path="/" element={<HomePage />} />
+        <Route path="/blog/:blogId" element={<BlogDetailPage />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/ManageBlog" element={<ManageBlog />} />

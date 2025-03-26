@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth');
 router.post('/create', authMiddleware, blogController.createBlog);
 router.get('/', blogController.getAllBlogs);
 router.get('/:id', blogController.getBlogById);
-router.put('/:id', authMiddleware, blogController.updateBlog);  // Ensure this route exists for updating
+router.put('/:id', authMiddleware, blogController.updateBlog);  
 router.delete('/:id', authMiddleware, blogController.deleteBlog);
 
 module.exports = router;

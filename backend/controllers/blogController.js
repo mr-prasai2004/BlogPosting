@@ -1,3 +1,6 @@
+const db = require('../config/db'); // Import MySQL database connection
+
+
 const Blog = require('../models/blogModel');
 
 // Create a new blog post
@@ -43,24 +46,33 @@ exports.getAllBlogs = async (req, res) => {
 };
 
 // Get blog post by ID
-exports.getBlogById = async (req, res) => {
-  try {
-    const blog = await Blog.getById(req.params.id);
+exports.getBlogById = (req, res) => {
+  const { identifier } = req.params;
+  let query;
+  console.log('Fetching blog with identifier:', identifier);  // Log the identifier
 
-    if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
-    }
-
-    res.json({
-      success: true,
-      data: blog
-    });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: 'Server error' });
+  if (!isNaN(identifier)) {
+    query = `SELECT * FROM blogs WHERE blog_id = ?`;  // Numeric ID
+  } else {
+    query = `SELECT * FROM blogs WHERE REPLACE(LOWER(title), ' ', '-') = ?`;  // Slugified title
   }
-};
 
+  console.log('Query:', query);  // Log the query being executed
+
+  db.query(query, [identifier], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ success: false, message: 'Server error' });
+    }
+    if (results.length === 0) {
+      console.log('No blog found');
+      return res.status(404).json({ success: false, message: 'Blog not found' });
+    }
+    
+    console.log('Blog found:', results[0]);
+    res.json({ success: true, data: results[0] });
+  });
+};
 // Update blog post
 exports.updateBlog = async (req, res) => {
   try {
